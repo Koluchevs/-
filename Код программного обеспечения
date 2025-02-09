@@ -1,0 +1,53 @@
+// ПИНЫ
+#define LEFT_SENSOR_LINE_PIN A0
+#define RIGHT_SENSOR_LINE_PIN A5
+#define MIDDLE_SENSOR_LINE_PIN A3
+#define SPEED_RIGHT      5 
+#define DIR_RIGHT      4
+#define SPEED_LEFT      6
+#define DIR_LEFT        7
+#define VOLTAGE 5.0
+ 
+float lineR, lineL, lineM;
+ 
+void setup() {
+    Serial.begin(9600);
+    for (int i = 4; i < 8; i++) {     
+    pinMode(i, OUTPUT);
+  }
+}
+ 
+void loop() {
+  //ДАТЧИКИ ЛИНИИ
+  int readingL = analogRead(LEFT_SENSOR_LINE_PIN);
+  lineL = (float)readingL * VOLTAGE / 1024.0;
+ 
+  int readingR = analogRead(RIGHT_SENSOR_LINE_PIN);
+  lineR = (float)readingR * VOLTAGE / 1024.0;
+ 
+  int readingM = analogRead(MIDDLE_SENSOR_LINE_PIN);
+  lineM = (float)readingM * VOLTAGE / 1024.0;
+  Serial.print(lineL);
+  Serial.print(" ; ");
+  Serial.print(lineM);
+  Serial.print(" ; ");
+  Serial.println(lineR);
+ 
+  //ДВИГАТЕЛИ
+  if (lineL < 0.8 && lineM < 2 && lineR < 4.9){
+    analogWrite(SPEED_RIGHT, 0);
+    analogWrite(SPEED_LEFT, 0);
+  }
+  if (lineL < 0.8 && lineM > 2 && lineR < 4.9){
+    digitalWrite(DIR_LEFT, LOW);
+    analogWrite(SPEED_LEFT, 255);
+    digitalWrite(DIR_RIGHT, LOW);
+    analogWrite(SPEED_RIGHT, 255);
+  }
+  if (lineL < 0.8 && lineM < 2 && lineR > 4.9){
+    digitalWrite(DIR_LEFT, LOW);
+    analogWrite(SPEED_LEFT, 255);
+    digitalWrite(DIR_RIGHT, LOW);
+    analogWrite(SPEED_RIGHT, 0);
+  }
+  }
